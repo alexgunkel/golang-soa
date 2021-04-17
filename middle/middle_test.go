@@ -1,7 +1,7 @@
 package middle_test
 
 import (
-	"github.com/alexgunkel/golang-soa/middle"
+	"github.com/alexgunkel/golang_soa/middle"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"

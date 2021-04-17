@@ -1,7 +1,7 @@
 package start_test
 
 import (
-	"github.com/alexgunkel/golang-soa/start"
+	"github.com/alexgunkel/golang_soa/start"
 	"testing"
 	"time"
 )
