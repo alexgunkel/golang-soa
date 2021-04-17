@@ -1,6 +1,14 @@
 Communicating Services
 ======================
-golang-soa
+by *Alexander Gunkel*
+
+
+
+
+# **<span style="color:red">WORK IN PROGRESS</span>**
+
+
+
 
 # Basic Idea
 Golang is by design not an object-oriented programming language. It explicitly tries to avoid the pitfalls of OOP languages
@@ -20,17 +28,20 @@ workflows much easier.
 
 *The main idea is that of small asynchronous services communicating by messages sent through channels.*
 
-# Challenges in Asynchronous Programming
-* Avoid *data races* and *deadlocks*.
-* Unit testing
-* Ordered shutdown.
+# Challenges of Asynchronous Programming
+* Reasoning about the workflow of the program at runtime.
+* Avoiding *data races* and *deadlocks*.
+* Unit testing.
+* Ordered shutdown without loss of information.
 
 # Architectural patterns
 
-## Pipelining services
+### Go Channel
+
+## Pipelining Services
 Managing asynchronous tasks and reasoning about the workflow should be easy and natural.
 
-### every service consists of a struct and a (possibly) endless for-loop.
+#### Every Service Consists of a Struct and a (Possibly) Endless For-Loop
 
     type MyService struct {}
     func NewMyStruct() *MyService {
@@ -42,7 +53,7 @@ Managing asynchronous tasks and reasoning about the workflow should be easy and 
         return &MyService{}
     }
 
-### every channel has an exclusive owner with exclusive to send messages
+#### Every Channel Has an Exclusive Owner with the Exclusive Right to Send Messages
 To make the messages available to receivers, the channel owner does not offer a traditional
 getter function but a getter for the channel as receiver:
 
@@ -55,7 +66,7 @@ Important: Communicate via channels, not via getters. A channel can transmit mor
 the information whether there are more messages to be sent. If there are no more messages, the sender can close the channel
 thereby telling all the receivers that the last messages have been sent.
 
-### use closing of channels for ending the process
+### Use Closing of Channels to Coordinate Shutdown
 Sometimes people use the concept of a `Context` to coordinate the application shutdown. Every Goroutine (or every struct 
 used in such a goroutine) has access to some main context. To close the program the context is cancelled, thereby giving
 all the goroutines the signal to end their work.
