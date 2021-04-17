@@ -1,28 +1,35 @@
 package start
 
-import "time"
+import (
+	"github.com/alexgunkel/golang_soa/soa"
+	"strconv"
+	"time"
+)
 
 type Start struct {
-	close chan struct{}
-	msg   chan string
+	msg chan soa.Message
 }
 
-func NewStart(name string, interval time.Duration) *Start {
+func NewStart(name string, interval time.Duration) soa.Node {
 	start := &Start{
-		close: make(chan struct{}),
-		msg:   make(chan string),
+		msg: make(chan soa.Message),
 	}
 
 	go func() {
+		killer := soa.NewKiller()
 		ticker := time.NewTicker(interval)
+		cnt := uint64(0)
 
 		for true {
+			cnt++
 			select {
 			case <-ticker.C:
-				start.msg <- name
-			case <-start.close:
+				start.msg <- soa.Message(name + " " + strconv.FormatUint(cnt, 10))
+			case <-killer.Done():
+				println("close " + name)
 				ticker.Stop()
 				close(start.msg)
+				return
 			}
 		}
 	}()
@@ -30,13 +37,6 @@ func NewStart(name string, interval time.Duration) *Start {
 	return start
 }
 
-func (s *Start) Stop() {
-	select {
-	case s.close <- struct{}{}:
-	default:
-	}
-}
-
-func (s *Start) Messages() <-chan string {
+func (s *Start) Messages() <-chan soa.Message {
 	return s.msg
 }

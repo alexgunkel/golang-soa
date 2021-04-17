@@ -1,11 +1,13 @@
 package middle
 
+import "github.com/alexgunkel/golang_soa/soa"
+
 type Middle struct {
-	msg <-chan string
+	msg <-chan soa.Message
 }
 
-func NewMiddle(name string, incoming <-chan string) *Middle {
-	msg := make(chan string)
+func NewMiddle(name string, incoming <-chan soa.Message) soa.Node {
+	msg := make(chan soa.Message)
 	m := &Middle{
 		msg: msg,
 	}
@@ -14,16 +16,17 @@ func NewMiddle(name string, incoming <-chan string) *Middle {
 		for true {
 			newIn, running := <- incoming
 			if !running {
+				println("close " + name)
 				close(msg)
 				return
 			}
-			msg <- name + " received " + newIn
+			msg <- soa.Message(name + " received ") + newIn
 		}
 	}()
 
 	return m
 }
 
-func (m *Middle) Messages() <-chan string {
+func (m *Middle) Messages() <-chan soa.Message {
 	return m.msg
 }
