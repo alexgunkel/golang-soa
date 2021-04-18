@@ -87,6 +87,7 @@ close(receive) // doesn't compile
 * Der Owner signalisiert durch Schließen, dass alle Aufgaben abgearbeitet wurden.
 
 ----
+
 # Service-Pipelines
 
 ```
@@ -102,4 +103,20 @@ type StartNode interface {
 type EndNode interface {
 	Done() <-chan struct{}
 }
+```
+
+* Alles, was ein einzelner Node unserer Service-Pipeline können muss, ist weitere Tasks auszugeben,
+die dann von anderen Nodes ausgeführt werden.
+* Ausschließlich die StartNode, die von keinen weiteren Nodes abhängen, brauchen eine Funktionalität
+zum Anhalten der Ausführung.
+* Ausschließlich die EndNodes benötigen eine Methode, die anderen anzeigt, ob sie noch Tasks erwarten.
+Alle anderen signalisieren dies durch Schließen der Messages()-Channels.
+* Die Services kennen voneinander ausschließlich die unidirektionales Messages-Channels.
+* Die Anwendung schließt nur die Start-Nodes und wartet auf das Signal der End-Nodes.
+  
+----
+# Beispiel
+
+```
+
 ```
