@@ -14,13 +14,13 @@ func NewMiddle(name string, incoming <-chan soa.Message) soa.Node {
 
 	go func() {
 		for true {
-			newIn, running := <- incoming
+			newIn, running := <-incoming
 			if !running {
 				println("close " + name)
 				close(msg)
 				return
 			}
-			msg <- soa.Message(name + " received ") + newIn
+			msg <- soa.Message(name+" received ") + newIn
 		}
 	}()
 

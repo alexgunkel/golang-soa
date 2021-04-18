@@ -19,12 +19,12 @@ func TestCollector_Messages(t *testing.T) {
 	close(ch1)
 
 	for i := 0; i < 3; i++ {
-		res, open := <- coll.Messages()
+		res, open := <-coll.Messages()
 		assert.True(t, open)
 		assert.Contains(t, "abc", res)
 	}
 
-	res, open := <- coll.Messages()
+	res, open := <-coll.Messages()
 	assert.False(t, open)
 	assert.Empty(t, res)
 }

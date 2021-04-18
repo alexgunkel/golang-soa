@@ -19,7 +19,7 @@ func NewCollector(nodes ...<-chan soa.Message) soa.Node {
 		go func() {
 			defer wg.Done()
 			for true {
-				v, open := <- n
+				v, open := <-n
 				if !open {
 					return
 				}
