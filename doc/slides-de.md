@@ -13,7 +13,7 @@
     
 # Goroutines als Services
 
-~~~
+~~~go
     go func() {
         for true {
           select {
@@ -39,14 +39,14 @@
 ----
 
 # Channels I: Grundlagen
-````
+````go
 ch := make(chan string, 1) // [1]
 ch <- "Hello World" // [2]
 v, open := <- ch // [3]
 <- ch // [4]
 
 close(ch) // [5]
-v, open = <- ch [6]
+v, open = <- ch // [6]
 ````
 
 * [1] erstellt einen Channel `ch` für Strings mit einer Bufferlänge von 1
@@ -65,7 +65,7 @@ v, open = <- ch [6]
 
 # Channels II: Best Practice
 
-```
+```go
 ch := make(chan string)
 var send chan<- string = ch
 var receive <-chan string = ch
@@ -115,8 +115,38 @@ Alle anderen signalisieren dies durch Schließen der Messages()-Channels.
 * Die Anwendung schließt nur die Start-Nodes und wartet auf das Signal der End-Nodes.
   
 ----
+
 # Beispiel
+Es soll folgende Struktur umgesetzt werden:
+![](flowchart.svg)
 
-```
+----
 
+```go
+func main() {
+	startOne := start.NewStartNode("start micro one", time.Millisecond*10)
+	startTwo := start.NewStartNode("start micro one ", time.Millisecond*15)
+
+	soa.NewKiller(func() {
+		startOne.Stop()
+		startTwo.Stop()
+	}, os.Kill, os.Interrupt)
+
+	middleOne := middle.NewMiddleNode("middle microOne", startOne.Messages())
+	middleTwo := middle.NewMiddleNode(
+		"middle microTwo",
+		middle.NewCollector(
+			startOne.Messages(),
+			startTwo.Messages(),
+            ).Messages(),
+	)
+	middleThree := middle.NewMiddleNode("middle microTwo", startTwo.Messages())
+
+	coll := middle.NewCollector(
+		middleOne.Messages(),
+		middleTwo.Messages(),
+		middleThree.Messages())
+
+	<-end.NewEndNode("end one", coll.Messages()).Done()
+}
 ```

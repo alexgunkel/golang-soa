@@ -6,6 +6,8 @@
 *.dylib
 *.pdf
 *.html
+*.dia
+*.dia~
 
 generated/
 .idea
