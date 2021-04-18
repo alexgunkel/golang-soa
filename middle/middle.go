@@ -7,7 +7,7 @@ type Middle struct {
 }
 
 func NewMiddle(name string, incoming <-chan soa.Message) soa.Node {
-	msg := make(chan soa.Message)
+	msg := make(chan soa.Message, 10)
 	m := &Middle{
 		msg: msg,
 	}

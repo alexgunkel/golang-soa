@@ -6,11 +6,11 @@ type Node interface {
 	Messages() <-chan Message
 }
 
-type Stoppable interface {
+type StartNode interface {
 	Node
 	Stop()
 }
 
-type End interface {
+type EndNode interface {
 	Done() <-chan struct{}
 }

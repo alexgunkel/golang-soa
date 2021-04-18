@@ -6,7 +6,7 @@ type End struct {
 	done <-chan struct{}
 }
 
-func NewEnd(name string, in <-chan soa.Message) soa.End {
+func NewEnd(name string, in <-chan soa.Message) soa.EndNode {
 	doneChanel := make(chan struct{})
 	go func() {
 		for true {

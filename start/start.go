@@ -11,9 +11,9 @@ type Start struct {
 	stop chan struct{}
 }
 
-func NewStart(name string, interval time.Duration) soa.Stoppable {
+func NewStart(name string, interval time.Duration) soa.StartNode {
 	start := &Start{
-		msg:  make(chan soa.Message),
+		msg:  make(chan soa.Message, 100),
 		stop: make(chan struct{}),
 	}
 
