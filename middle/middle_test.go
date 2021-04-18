@@ -2,13 +2,14 @@ package middle_test
 
 import (
 	"github.com/alexgunkel/golang_soa/middle"
+	"github.com/alexgunkel/golang_soa/soa"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
 )
 
 func TestNewMiddle(t *testing.T) {
-	in := make(chan string)
+	in := make(chan soa.Message)
 	m := middle.NewMiddle("middle", in)
 	assert.NotNil(t, m)
 

@@ -7,6 +7,7 @@
 *.pdf
 *.html
 
+generated/
 .idea
 
 # Test binary, built with `go test -c`

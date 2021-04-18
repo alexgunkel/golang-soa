@@ -5,25 +5,30 @@ import (
 	"os/signal"
 )
 
-type Killer struct {
+type Killer interface {
+	Done() <-chan struct{}
+}
+
+type sigKiller struct {
 	done <-chan struct{}
 }
 
-func NewKiller() *Killer {
+func NewKiller(cb func(), signal2 ...os.Signal) Killer {
 	done := make(chan struct{})
 
 	go func() {
 		stop := make(chan os.Signal)
-		signal.Notify(stop, os.Interrupt, os.Kill)
+		signal.Notify(stop, signal2...)
 		<-stop
 		close(done)
+		cb()
 	}()
 
-	return &Killer{
+	return &sigKiller{
 		done: done,
 	}
 }
 
-func (k *Killer) Done() <-chan struct{} {
+func (k *sigKiller) Done() <-chan struct{} {
 	return k.done
 }
